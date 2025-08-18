@@ -33,7 +33,10 @@ export default function ChatId() {
     await addMessage({ variables: { content: message, chat_id } });
 
     // trying to trigger n8n for llm message
-    await sendMessage({ variables: { content: message, chat_id } });
+    const { boolean_result } = await sendMessage({
+      variables: { content: message, chat_id },
+    });
+    console.log(boolean_result);
     setMessage("");
   };
 
