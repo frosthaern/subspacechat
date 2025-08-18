@@ -16,7 +16,6 @@ export default function Home() {
     if (error) {
       console.error(error.message);
     }
-    console.log("Signed in successfully");
     router.push("/chat");
   };
 
