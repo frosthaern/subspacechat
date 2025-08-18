@@ -1,27 +1,22 @@
-"use client"
+"use client";
 import { useState } from "react";
-import Link from "next/link";
 import nhost from "@/lib/nhost";
-import { useRouter } from "next/navigation";
-
-export default function Home() {
+export default function SignUp() {
   const [cred, setCred] = useState({ email: "", password: "" });
-  const router = useRouter();
 
-  const signIn = () => {
-    const { error } = nhost.auth.signIn({
+  const signUp = () => {
+    const { error } = nhost.auth.signUp({
       email: cred.email,
       password: cred.password,
     });
     if (error) {
       console.error(error.message);
     }
-    console.log("Signed in successfully");
-    router.push("/chat");
   };
 
   return (
-    <div>
+    <div className="flex flex-col items-center justify-center h-screen">
+      <h1>Sign Up</h1>
       <input
         type="text"
         placeholder="email"
@@ -32,8 +27,7 @@ export default function Home() {
         placeholder="password"
         onChange={(e) => setCred({ ...cred, password: e.target.value })}
       />
-      <button onClick={signIn}>Sign In</button>
-      <Link href="/signup">Don't have an account? Sign Up</Link>
+      <button onClick={signUp}>Sign Up</button>
     </div>
   );
 }
