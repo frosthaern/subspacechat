@@ -4,32 +4,22 @@ import nhost from "@/lib/nhost";
 import { useRouter } from "next/navigation";
 import { User, Mail, Lock } from "lucide-react";
 import Link from "next/link";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 export default function SignUp() {
-  const { toast } = useToast();
   const router = useRouter();
   const [cred, setCred] = useState({ email: "", password: "" });
 
-  const signUp = () => {
-    const { session, error } = nhost.auth.signUp({
+  const signUp = async () => {
+    const { session, error } = await nhost.auth.signUp({
       email: cred.email,
       password: cred.password,
     });
 
     if (error) {
-      console.error(error.message);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message,
-      });
+      toast.error(error.message);
     } else {
-      toast({
-        variant: "default",
-        title: "Success",
-        description: "Account created successfully",
-      });
+      toast.success("Account created successfully");
       router.replace("/");
     }
   };

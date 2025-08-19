@@ -49,7 +49,7 @@
 // }
 
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import nhost from "@/lib/nhost";
 import { useRouter } from "next/navigation";
@@ -57,33 +57,40 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Mail, Lock, LogIn } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
+import { useAuthenticationStatus } from "@nhost/react";
 
 export default function Home() {
-  const { toast } = useToast();
   const [cred, setCred] = useState({ email: "", password: "" });
   const router = useRouter();
 
-  const signIn = () => {
-    const { session, error } = nhost.auth.signIn({
+  const { isAuthenticated, isLoading } = useAuthenticationStatus();
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (isAuthenticated) {
+        router.push("/chat");
+      }
+    }
+  }, [isAuthenticated, isLoading, router]);
+
+  const signIn = async () => {
+    const { session, error } = await nhost.auth.signIn({
       email: cred.email,
       password: cred.password,
     });
-    if (!session) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error,
-      });
-      router.push("/signup");
+
+    if (error) {
+      toast.error(error.message);
     } else {
-      toast({
-        variant: "default",
-        title: "Success",
-        description: "Signed in successfully",
-      });
-      console.log(session);
-      router.push("/chat");
+      if (session?.user?.emailVerified) {
+        toast.success("Signed in successfully");
+        router.push("/chat");
+      } else {
+        toast.success(
+          "Please verify your email by clicking on the link that was sent to your mail"
+        );
+      }
     }
   };
 

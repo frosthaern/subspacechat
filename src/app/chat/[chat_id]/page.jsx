@@ -125,7 +125,7 @@
 
 "use client";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MESSAGES_OF_CHAT_SUBSCRIPTION,
   INSERT_MESSAGE,
@@ -140,9 +140,23 @@ import Link from "next/link";
 import { Send, MessageCircle, Plus, Bot } from "lucide-react";
 import { useRouter } from "next/navigation";
 import nhost from "@/lib/nhost";
+import { toast } from "sonner";
+import { useAuthenticationStatus } from "@nhost/react";
 
 export default function ChatId() {
+  const { isAuthenticated, isLoading } = useAuthenticationStatus();
+  const user = nhost.auth.getUser();
   const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isAuthenticated || !user?.emailVerified) {
+        toast.error("Login to Access the Chat");
+        router.replace("/");
+      }
+    }
+  }, [isAuthenticated, user?.emailVerified, router, isLoading]);
+
   const { chat_id } = useParams();
   const { data, loading, error } = useSubscription(
     MESSAGES_OF_CHAT_SUBSCRIPTION,
@@ -154,12 +168,9 @@ export default function ChatId() {
   const [addMessage] = useMutation(INSERT_MESSAGE);
   const [addChat] = useMutation(INSERT_CHAT);
   const [sendMessage] = useMutation(SEND_MESSAGE);
-  const user = nhost.auth.getUser();
   const { data: chatData } = useQuery(FETCH_CHATS, {
     variables: { user_id: user?.id },
   });
-
-  console.log(user);
 
   if (loading)
     return (
@@ -199,8 +210,6 @@ export default function ChatId() {
     const { boolean_result } = await sendMessage({
       variables: { content: message, chat_id },
     });
-    console.log(boolean_result);
-    console.log(user);
     setMessage("");
   };
 
@@ -238,9 +247,8 @@ export default function ChatId() {
             </Button>
             <Button
               className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-none shadow-lg shadow-blue-500/25 transition-all duration-200 m-2"
-              onClick={() => {
-                nhost.auth.signOut();
-                router.replace("/");
+              onClick={async () => {
+                await nhost.auth.signOut();
               }}
             >
               Log Out
