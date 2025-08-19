@@ -1,5 +1,4 @@
 "use client";
-
 import { ApolloClient, InMemoryCache, HttpLink, split } from "@apollo/client";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
@@ -8,7 +7,7 @@ import nhost from "@/lib/nhost";
 import { ApolloLink } from "@apollo/client";
 
 const httpLink = new HttpLink({
-  uri: process.env.NEXT_PUBLIC_NHOST_GRAPHQL_URL,
+  uri: "https://jelsdyikqlournpamnbm.hasura.ap-south-1.nhost.run/v1/graphql",
 });
 
 const authLink = new ApolloLink((operation, forward) => {
@@ -28,7 +27,7 @@ const wsLink =
   typeof window !== "undefined"
     ? new GraphQLWsLink(
         createClient({
-          url: process.env.NEXT_PUBLIC_NHOST_GRAPHQL_WSS,
+          url: "wss://jelsdyikqlournpamnbm.hasura.ap-south-1.nhost.run/v1/graphql",
           connectionParams: () => {
             const token = nhost.auth.getAccessToken();
             return {
