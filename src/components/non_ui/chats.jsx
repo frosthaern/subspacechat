@@ -14,15 +14,17 @@ export default function Chats() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  return (
-    <div>
-      {data?.subspace_chats.map((chat) => (
-        <div key={chat.id}>
-          <Link href={`/chat/${chat.id}`}>
-            <p>{chat.title}</p>
-          </Link>
-        </div>
-      ))}
-    </div>
-  );
+return (
+  <div className="space-y-2">
+    {data?.subspace_chats?.map((chat) => (
+      <div
+        key={chat.id}
+        className="px-4 py-3 rounded-lg cursor-pointer hover:bg-muted transition"
+      >
+        <Link href={`/chat/${chat.id}`}>{chat.title}</Link>
+      </div>
+    ))}
+  </div>
+);
+
 }

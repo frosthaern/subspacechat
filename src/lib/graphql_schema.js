@@ -50,16 +50,6 @@ export const MESSAGES_OF_CHAT_SUBSCRIPTION = gql`
   }
 `;
 
-export const CHAT_SUBSCRIPTION = gql`
-  subscription {
-    subspace_chats {
-      id
-      title
-      user_id
-    }
-  }
-`;
-
 export const INSERT_MESSAGE = gql`
   mutation InsertMessage($content: String!, $chat_id: uuid!) {
     insert_subspace_messages_one(
