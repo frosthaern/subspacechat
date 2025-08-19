@@ -8,7 +8,7 @@ import nhost from "@/lib/nhost";
 import { ApolloLink } from "@apollo/client";
 
 const httpLink = new HttpLink({
-  uri: "https://jelsdyikqlournpamnbm.hasura.ap-south-1.nhost.run/v1/graphql",
+  uri: process.env.NEXT_PUBLIC_NHOST_GRAPHQL_URL,
 });
 
 const authLink = new ApolloLink((operation, forward) => {
@@ -28,7 +28,7 @@ const wsLink =
   typeof window !== "undefined"
     ? new GraphQLWsLink(
         createClient({
-          url: "wss://jelsdyikqlournpamnbm.hasura.ap-south-1.nhost.run/v1/graphql",
+          url: process.env.NEXT_PUBLIC_NHOST_GRAPHQL_WSS,
           connectionParams: () => {
             const token = nhost.auth.getAccessToken();
             return {
